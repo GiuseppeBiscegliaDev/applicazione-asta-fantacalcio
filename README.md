@@ -47,9 +47,7 @@ git clone <repository-url>
 cd applicazione-asta-fantacalcio
 
 # 2. Setup Database
-createdb fantacalcio_asta
-createdb fantacalcio_player
-createdb fantacalcio_user
+createdb fantacalcio
 
 # 3. Avvio Backend (in terminali separati)
 cd backend/api-gateway && ./mvnw spring-boot:run
@@ -143,10 +141,8 @@ applicazione-asta-fantacalcio/
 
 ### Database
 ```sql
--- Crea database per ogni servizio
-CREATE DATABASE fantacalcio_asta;
-CREATE DATABASE fantacalcio_player;
-CREATE DATABASE fantacalcio_user;
+-- Crea database unico per tutti i servizi
+CREATE DATABASE fantacalcio;
 ```
 
 ### Porte Servizi
@@ -160,7 +156,7 @@ CREATE DATABASE fantacalcio_user;
 ### Environment Variables
 ```bash
 # Database
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/fantacalcio_asta
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/fantacalcio
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=password
 

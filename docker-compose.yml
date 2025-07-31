@@ -1,0 +1,180 @@
+version: '3.8'
+
+services:
+  # Database PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: fantacalcio-postgres
+    environment:
+      POSTGRES_DB: fantacalcio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fantacalcio-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: fantacalcio-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - fantacalcio-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: fantacalcio-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: auction-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://asta-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/api/auction/**
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: player-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://player-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/api/player/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2_ID: user-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://user-service:8083
+      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/api/user/**
+      SPRING_CLOUD_GATEWAY_ROUTES_3_ID: notification-service
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://notification-service:8084
+      SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0: Path=/api/notification/**
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+  # Asta Service
+  asta-service:
+    build:
+      context: ./backend/asta-service
+      dockerfile: Dockerfile
+    container_name: fantacalcio-asta-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fantacalcio
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SERVER_PORT: 8081
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+  # Player Service
+  player-service:
+    build:
+      context: ./backend/player-service
+      dockerfile: Dockerfile
+    container_name: fantacalcio-player-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fantacalcio
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SERVER_PORT: 8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+  # User Service
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    container_name: fantacalcio-user-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fantacalcio
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      JWT_SECRET: your-super-secret-jwt-key-for-fantacalcio
+      JWT_EXPIRATION: 86400000
+      SERVER_PORT: 8083
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+  # Notification Service
+  notification-service:
+    build:
+      context: ./backend/notification-service
+      dockerfile: Dockerfile
+    container_name: fantacalcio-notification-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8084
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+  # Frontend (opzionale)
+  web-client:
+    build:
+      context: ./frontend/web-client
+      dockerfile: Dockerfile
+    container_name: fantacalcio-web-client
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:8080
+      REACT_APP_WS_URL: ws://localhost:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - fantacalcio-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  fantacalcio-network:
+    driver: bridge 
