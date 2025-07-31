@@ -1,0 +1,25 @@
+{
+  "name": "applicazione-asta-fantacalcio",
+  "version": "1.0.0",
+  "description": "Applicazione web per aste fantacalcio",
+  "private": true,
+  "workspaces": [
+    "backend/*",
+    "frontend/*",
+    "shared/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "concurrently \"npm run dev --workspace=@fantacalcio/api-gateway\" \"npm run dev --workspace=@fantacalcio/auction-service\" \"npm run dev --workspace=@fantacalcio/player-service\" \"npm run dev --workspace=@fantacalcio/user-service\" \"npm run dev --workspace=@fantacalcio/notification-service\"",
+    "dev:frontend": "npm run dev --workspace=@fantacalcio/web-client",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
