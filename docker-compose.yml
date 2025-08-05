@@ -53,7 +53,7 @@ services:
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
-      - "8080:8080"
+      - "8085:8085"
     networks:
       - fantacalcio-net
 

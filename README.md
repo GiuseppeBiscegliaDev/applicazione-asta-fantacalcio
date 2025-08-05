@@ -146,7 +146,7 @@ CREATE DATABASE fantacalcio;
 ```
 
 ### Porte Servizi
-- **API Gateway**: 8080
+- **API Gateway**: 8085
 - **Asta Service**: 8081
 - **Player Service**: 8082
 - **User Service**: 8083

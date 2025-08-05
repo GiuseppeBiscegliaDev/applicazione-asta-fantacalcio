@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8085
 
 spring:
   application:
@@ -7,10 +7,6 @@ spring:
 
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       routes:
         - id: user-service
           uri: lb://USER_SERVICE

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: USER_SERVICE
+    name: user-service
   datasource:
     url: jdbc:postgresql://fantacalcio-postgres:5432/fantacalcio
     username: postgres
