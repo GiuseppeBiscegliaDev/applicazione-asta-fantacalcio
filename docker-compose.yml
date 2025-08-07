@@ -57,6 +57,23 @@ services:
     networks:
       - fantacalcio-net
 
+  asta-service:
+    build:
+      context: ./backend/asta-service
+    container_name: asta-service
+    depends_on:
+      - fantacalcio-postgres
+      - eureka-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://fantacalcio-postgres:5432/fantacalcio
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    ports:
+      - "8084:8084"
+    networks:
+      - fantacalcio-net
+
 volumes:
   postgres_data:
 

@@ -1,4 +1,4 @@
-package com.fantacalcio.user_service.controller;
+package com.fantacalcio.asta_service.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("/user/ping")
+    @GetMapping("/asta/ping")
     public String ping() {
-        return "User Service OK";
+        return "Asta Service OK";
     }
     
 }
