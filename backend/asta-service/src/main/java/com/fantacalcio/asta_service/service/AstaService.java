@@ -30,4 +30,8 @@ public class AstaService {
 
         return astaRepository.save(asta);
     }
+
+    public Asta trovaAstaPerId(Long id) {
+        return astaRepository.findById(id).orElse(null);
+    }
 }
