@@ -147,10 +147,10 @@ CREATE DATABASE fantacalcio;
 
 ### Porte Servizi
 - **API Gateway**: 8085
-- **Asta Service**: 8081
-- **Player Service**: 8082
+- **Asta Service**: 8084
 - **User Service**: 8083
-- **Notification Service**: 8084
+- **Player Service**: 8082
+- **Notification Service**: 8081
 - **Frontend**: 3000
 
 ### Environment Variables

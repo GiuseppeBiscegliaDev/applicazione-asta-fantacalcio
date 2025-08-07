@@ -16,6 +16,10 @@ spring:
           uri: lb://ASTA-SERVICE
           predicates:
             - Path=/asta/**
+        - id: player-service
+          uri: lb://PLAYER-SERVICE
+          predicates:
+            - Path=/player/**
 
 eureka:
   client:

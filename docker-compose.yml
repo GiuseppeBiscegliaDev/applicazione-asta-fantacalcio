@@ -50,6 +50,8 @@ services:
     depends_on:
       - eureka-server
       - user-service
+      - asta-service
+      - player-service
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
@@ -71,6 +73,20 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8084:8084"
+    networks:
+      - fantacalcio-net
+
+  player-service:
+    build:
+      context: ./backend/player-service
+    container_name: player-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - eureka-server
+      - fantacalcio-postgres
     networks:
       - fantacalcio-net
 
