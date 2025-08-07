@@ -9,11 +9,9 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: lb://USER_SERVICE
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-          filters:
-            - StripPrefix=1
 
 eureka:
   client:
