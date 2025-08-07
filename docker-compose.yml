@@ -52,6 +52,7 @@ services:
       - user-service
       - asta-service
       - player-service
+      - notification-service
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
@@ -87,6 +88,19 @@ services:
     depends_on:
       - eureka-server
       - fantacalcio-postgres
+    networks:
+      - fantacalcio-net
+
+  notification-service:
+    build:
+      context: ./backend/notification-service
+    container_name: notification-service
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    ports:
+      - "8081:8081"
     networks:
       - fantacalcio-net
 

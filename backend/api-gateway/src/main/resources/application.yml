@@ -20,6 +20,11 @@ spring:
           uri: lb://PLAYER-SERVICE
           predicates:
             - Path=/player/**
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notification/**
+
 
 eureka:
   client:
